@@ -3,6 +3,6 @@ FactoryBot.define do
     initialize_with { ItemType.find_or_create_by(name: "Book") }
     name { "Book" }
     loan_duration_days { 7 }
-    max_renewals { 0 }
+    max_renewals { 2 }
   end
 end

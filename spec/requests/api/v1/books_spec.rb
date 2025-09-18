@@ -1,9 +1,5 @@
 require "rails_helper"
 
-RSpec.configure do |config|
-  config.include FactoryBot::Syntax::Methods
-end
-
 RSpec.describe "Api::V1::Books", type: :request do
   let(:librarian) { create(:user, :librarian) }
   let(:member) { create(:user, :member) }
@@ -16,7 +12,7 @@ RSpec.describe "Api::V1::Books", type: :request do
     it "returns paginated list of books" do
       get "/api/v1/books", headers: headers_member
       expect(response).to have_http_status(:ok)
-      
+
       books = JSON.parse(response.body)
       expect(books.size).to be >= 1
     end
@@ -43,12 +39,12 @@ RSpec.describe "Api::V1::Books", type: :request do
     it "filters by multiple fields" do
       get "/api/v1/books", params: { title: "Sherlock", author: "Doyle" }, headers: headers_member
       books = JSON.parse(response.body)
-      expect(books.map { |b| b["title"] }).to eq(["Sherlock Holmes"])
+      expect(books.map { |b| b["title"] }).to eq([ "Sherlock Holmes" ])
     end
   end
 
   describe "POST /books" do
-    let(:valid_params) do 
+    let(:valid_params) do
       { book: { title: "New Book", author: "Author X", genre: "Tech", isbn: "444", item_type_id: book1.item_type.id } }
     end
 

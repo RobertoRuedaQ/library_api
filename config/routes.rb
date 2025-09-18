@@ -10,14 +10,6 @@ Rails.application.routes.draw do
         resources :copies, except: [ :show ]
       end
 
-      resources :magazines do
-        resources :copies, except: [ :show ]
-      end
-
-      resources :dvds do
-        resources :copies, except: [ :show ]
-      end
-
       resources :copies, only: [ :show ] do
         member do
           post :borrow
@@ -25,7 +17,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :borrowings do
+      resources :borrowings, only: [ :index, :create ] do
         member do
           patch :renew
           patch :return

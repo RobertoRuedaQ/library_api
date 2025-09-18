@@ -16,9 +16,14 @@ class Copy < ApplicationRecord
   }
 
   # scopes
-  scope :available, -> {
-    left_outer_joins(:borrowings)
-      .where(borrowings: { returned_at: nil })
-      .or(where.missing(:borrowings))
-  }
+  scope :available, -> { where(status: :available) }
+
+  # methods
+  def loan_duration
+    borrowable.item_type.loan_duration_days
+  end
+
+  def due_date
+    Time.zone.now + loan_duration.days
+  end
 end
