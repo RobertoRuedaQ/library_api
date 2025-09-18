@@ -1,6 +1,16 @@
 class ApplicationController < ActionController::API
   before_action :authorize_request
 
+  protected
+
+  def authorize_librarian!
+    unless current_user&.roles&.exists?(name: "Librarian")
+      render json: { error: "Forbidden: Librarian role required" }, status: :forbidden
+    end
+  end
+
+
+
   private
 
   def authorize_request

@@ -1,6 +1,9 @@
 FactoryBot.define do
   factory :role do
-    name { "MyString" }
-    description { "MyText" }
+    name { "Member" }
+
+    trait :librarian do
+      name { "Librarian" }
+    end
   end
 end
