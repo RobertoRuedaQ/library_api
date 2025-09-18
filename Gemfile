@@ -36,10 +36,11 @@ gem "thruster", require: false
 # gem "rack-cors"
 
 # Aditional gems for this project
-gem 'bcrypt'
-gem 'jwt'
-gem 'rack-cors'
-gem 'will_paginate'
+gem "bcrypt"
+gem "jwt"
+gem "rack-cors"
+gem "will_paginate"
+gem "faker"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -51,6 +52,6 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
+  gem "rspec-rails"
+  gem "factory_bot_rails"
 end
