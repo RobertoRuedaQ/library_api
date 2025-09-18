@@ -5,11 +5,11 @@ class Permission < ApplicationRecord
   validates :name, :resource, :action, presence: true
   validates :resource, uniqueness: { scope: :action }
 
-  enum action: {
+  enum :action, {
     create: 0,
     read: 1,
     update: 2,
     delete: 3,
     manage: 4
-  }
+  }, prefix: true
 end

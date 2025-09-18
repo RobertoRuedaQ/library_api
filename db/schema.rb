@@ -10,28 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_18_184840) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_18_183933) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-
-  create_table "books", force: :cascade do |t|
-    t.string "author"
-    t.string "genre"
-    t.string "isbn"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "borrowable_id", null: false
-    t.index ["author"], name: "index_books_on_author"
-    t.index ["borrowable_id"], name: "index_books_on_borrowable_id"
-    t.index ["genre"], name: "index_books_on_genre"
-    t.index ["isbn"], name: "index_books_on_isbn", unique: true
-  end
 
   create_table "borrowables", force: :cascade do |t|
     t.string "title", null: false
     t.bigint "item_type_id", null: false
     t.integer "copies_count", default: 0, null: false
     t.string "type", null: false
+    t.string "author"
+    t.string "genre"
+    t.string "isbn"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["item_type_id"], name: "index_borrowables_on_item_type_id"
@@ -122,7 +112,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_184840) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  add_foreign_key "books", "borrowables"
   add_foreign_key "borrowables", "item_types"
   add_foreign_key "borrowings", "copies"
   add_foreign_key "borrowings", "users"

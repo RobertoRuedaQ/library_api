@@ -1,29 +1,14 @@
 
 require 'faker'
-
+puts "Seeding database..."
 if Rails.env.development?
-  [ Borrowing, Copy, Book, Magazine, Dvd, Borrowable, UserRole, RolePermission, User, Role, Permission, ItemType ].each(&:delete_all)
+  [ Borrowing, Copy, Book, Borrowable, UserRole, RolePermission, User, Role, Permission, ItemType ].each(&:delete_all)
 end
 
 
 book_type = ItemType.find_or_create_by(name: "Book") do |item|
   item.loan_duration_days = 14
   item.max_renewals = 2
-end
-
-magazine_type = ItemType.find_or_create_by(name: "Magazine") do |item|
-  item.loan_duration_days = 7
-  item.max_renewals = 1
-end
-
-dvd_type = ItemType.find_or_create_by(name: "DVD") do |item|
-  item.loan_duration_days = 3
-  item.max_renewals = 1
-end
-
-audiobook_type = ItemType.find_or_create_by(name: "Audiobook") do |item|
-  item.loan_duration_days = 21
-  item.max_renewals = 3
 end
 
 
@@ -42,6 +27,7 @@ resources.each do |resource|
   end
 end
 
+puts "Created #{Permission.count} permissions."
 
 librarian_role = Role.find_or_create_by(name: "Librarian") do |role|
   role.description = "Manage borrowings, items and basic user operations"
@@ -57,11 +43,13 @@ librarian_permissions = Permission.where(
   resource: %w[borrowable copy borrowing user item_type],
   action: %w[create read update delete]
 )
+
 librarian_role.permissions = librarian_permissions
 member_permissions = Permission.where(
   resource: %w[borrowable],
   action: %w[read]
 )
+
 member_role.permissions = member_permissions
 
 librarian_user = User.find_or_create_by(email: "librarian@library.com") do |user|
@@ -70,8 +58,10 @@ librarian_user = User.find_or_create_by(email: "librarian@library.com") do |user
   user.birth_date = Date.new(1985, 5, 15)
   user.password = "password123"
 end
+
 librarian_user.roles << librarian_role unless librarian_user.roles.include?(librarian_role)
 
+puts "creating users..."
 50.times do
   user = User.create!(
     name: Faker::Name.first_name,
@@ -81,8 +71,7 @@ librarian_user.roles << librarian_role unless librarian_user.roles.include?(libr
     password: "password123"
   )
 
-  role = rand < 0.7 ? member_role : student_role
-  user.roles << role
+  user.roles << member_role
 end
 
 
@@ -92,15 +81,11 @@ book_genres = [
   "Travel", "Cooking", "Art", "Religion", "Philosophy"
 ]
 
+puts "creating books..."
 150.times do
-  borrowable = Borrowable.create!(
+  Book.create!(
     title: Faker::Book.title,
     item_type: book_type,
-    type: "BookBorrowable"
-  )
-
-  Book.create!(
-    borrowable: borrowable,
     author: Faker::Book.author,
     genre: book_genres.sample,
     isbn: Faker::Code.isbn
@@ -109,6 +94,7 @@ end
 
 copy_conditions = [ "Excellent", "Good", "Fair", "Poor" ]
 
+puts "creating copies..."
 Borrowable.find_each do |borrowable|
   copies_count = rand(1..5)
 
@@ -125,6 +111,7 @@ end
 
 regular_users = User.joins(:roles).where(roles: { name: [ "Member", "Student" ] })
 available_copies = Copy.where(status: :available).limit(100)
+
 50.times do
   user = regular_users.sample
   copy = available_copies.sample
@@ -140,13 +127,14 @@ available_copies = Copy.where(status: :available).limit(100)
     borrowed_at: borrowed_at,
     due_at: due_at,
     renewal_count: [ 0, 0, 0, 1, 2 ].sample 
-
+  )
   copy.update!(status: :borrowed)
   available_copies.delete(copy)
 end
+
 80.times do
   user = regular_users.sample
-  copy = Copy.available_copies.sample
+  copy = Copy.available.sample
   next if copy.nil?
 
   borrowed_at = Faker::Date.between(from: 6.months.ago, to: 2.months.ago)
@@ -166,7 +154,7 @@ end
 
 10.times do
   user = regular_users.sample
-  copy = Copy.available_copies.sample
+  copy = Copy.available.sample
   next if copy.nil?
 
   borrowed_at = Faker::Date.between(from: 45.days.ago, to: 30.days.ago)
@@ -183,3 +171,5 @@ end
 
   copy.update!(status: :borrowed)
 end
+
+puts "BD has been seeded"
