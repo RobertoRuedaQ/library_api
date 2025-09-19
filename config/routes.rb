@@ -6,6 +6,8 @@ Rails.application.routes.draw do
       post   "login",  to: "sessions#create"
       delete "logout", to: "sessions#destroy"
 
+      resource :dashboard, only: [ :show ], controller: "dashboard"
+
       resources :books do
         resources :copies, except: [ :show ]
       end

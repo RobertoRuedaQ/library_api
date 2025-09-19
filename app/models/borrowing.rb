@@ -1,14 +1,22 @@
 class Borrowing < ApplicationRecord
+  # Associations
   belongs_to :user
   belongs_to :copy
 
+  # validations
   validates :borrowed_at, :due_at, presence: true
+  validates :due_at, comparison: { greater_than_or_equal_to: :borrowed_at }
   validates :renewal_count, numericality: { greater_than_or_equal_to: 0 }
 
+  # Scopes
   scope :for_user, ->(user) { where(user: user) }
   scope :active_for_user, ->(user) { for_user(user).active }
   scope :overdue_for_user, ->(user) { for_user(user).overdue }
+  scope :active, -> { where(returned_at: nil) }
+  scope :overdue, -> { active.where("due_at < ?", Time.current) }
+  scope :due_today, -> { active.where(due_at: Time.zone.today.all_day) }
 
+  # Instance Methods
   def overdue?
     returned_at.nil? && due_at < Time.current
   end

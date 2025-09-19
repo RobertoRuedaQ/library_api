@@ -38,4 +38,8 @@ class ApplicationController < ActionController::API
       render json: { error: "Forbidden: You don’t have permission for this action" }, status: :forbidden
     end
   end
+
+  def librarian?
+    current_user&.roles&.exists?(name: "Librarian")
+  end
 end
