@@ -9,15 +9,10 @@ Rails.application.routes.draw do
       resource :dashboard, only: [ :show ], controller: "dashboard"
 
       resources :books do
-        resources :copies, except: [ :show ]
+        resources :copies, only: [ :index, :create ]
       end
 
-      resources :copies, only: [ :show ] do
-        member do
-          post :borrow
-          patch :return
-        end
-      end
+      resources :copies, only: [ :show, :update, :destroy ]
 
       resources :borrowings, only: [ :index, :create ] do
         member do
@@ -27,9 +22,6 @@ Rails.application.routes.draw do
       end
 
       resources :users, except: [ :new, :edit ]
-
-      get "search/borrowables", to: "search#borrowables"
-      get "search/available_copies", to: "search#available_copies"
     end
   end
 end
