@@ -9,13 +9,11 @@ class ApplicationController < ActionController::API
     end
   end
 
-
-
-  private
-
   def authorize_request
     render json: { error: "Unauthorized" }, status: :unauthorized unless current_user
   end
+
+  private
 
   def current_user
     return @current_user if defined?(@current_user)

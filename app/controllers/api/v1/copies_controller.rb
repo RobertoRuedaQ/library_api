@@ -1,5 +1,6 @@
 class Api::V1::CopiesController < ApplicationController
-  before_action :authorize_librarian!
+  skip_before_action :authorize_request, only: [ :index, :show ]
+  before_action :authorize_librarian!, only: [ :create, :update, :destroy ]
   before_action :set_copy, only: [ :show, :update, :destroy ]
 
   def index

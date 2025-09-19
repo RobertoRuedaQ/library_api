@@ -1,16 +1,20 @@
 class Api::V1::BooksController < ApplicationController
+  skip_before_action :authorize_request, only: [ :index, :show ]
   before_action :set_book, only: [ :show, :update, :destroy ]
   before_action :authorize_librarian!, only: [ :create, :update, :destroy ]
 
   def index
     filters = params.slice(:title, :author, :genre)
     books = Book.filter_by(filters)
-                .paginate(page: params[:page], per_page: 10)
-
-    render json: books, each_serializer: BookSerializer, meta: {
-      current_page: books.current_page,
-      total_pages: books.total_pages,
-      total_entries: books.total_entries
+      .paginate(page: params[:page], per_page: 10)
+    
+    render json: {
+      books: books,
+      meta: {
+        current_page: books.current_page,
+        total_pages: books.total_pages,
+        total_entries: books.total_entries
+      }
     }, status: :ok
   end
 
