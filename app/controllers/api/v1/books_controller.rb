@@ -7,7 +7,7 @@ class Api::V1::BooksController < ApplicationController
     filters = params.slice(:title, :author, :genre)
     books = Book.filter_by(filters)
       .paginate(page: params[:page], per_page: 10)
-    
+
     render json: {
       books: books,
       meta: {

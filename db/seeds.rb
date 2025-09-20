@@ -126,7 +126,7 @@ available_copies = Copy.where(status: :available).limit(100)
     copy: copy,
     borrowed_at: borrowed_at,
     due_at: due_at,
-    renewal_count: [ 0, 0, 0, 1, 2 ].sample 
+    renewal_count: [ 0, 0, 0, 1, 2 ].sample
   )
   copy.update!(status: :borrowed)
   available_copies.delete(copy)

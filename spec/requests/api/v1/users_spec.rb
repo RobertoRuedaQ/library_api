@@ -37,7 +37,6 @@ RSpec.describe "Api::V1::Users", type: :request do
         post "/api/v1/users", params: valid_params
 
         expect(response).to have_http_status(:created)
-        
         json = JSON.parse(response.body)
         expect(json["token"]).to be_present
         expect(json["user"]["email"]).to eq("test@example.com")
@@ -50,7 +49,6 @@ RSpec.describe "Api::V1::Users", type: :request do
         post "/api/v1/users", params: invalid_params
 
         expect(response).to have_http_status(:unprocessable_entity)
-        
         json = JSON.parse(response.body)
         expect(json["errors"]).to be_an(Array)
         expect(json["errors"]).to include("Email is invalid")

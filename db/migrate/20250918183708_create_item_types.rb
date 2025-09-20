@@ -7,7 +7,6 @@ class CreateItemTypes < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
     add_index :item_types, :name, unique: true
   end
 end
