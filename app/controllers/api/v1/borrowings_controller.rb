@@ -3,7 +3,12 @@ class Api::V1::BorrowingsController < ApplicationController
   before_action :authorize_librarian!, only: [ :return ]
 
   def index
-    borrowings = current_user.borrowings.includes(copy: :borrowable)
+    if librarian?
+      borrowings = Borrowing.includes(copy: :borrowable, user: {}).where(returned_at: nil)
+    else
+      borrowings = current_user.borrowings.includes(copy: :borrowable)
+    end
+
     render json: borrowings, each_serializer: BorrowingSerializer, status: :ok
   end
 
