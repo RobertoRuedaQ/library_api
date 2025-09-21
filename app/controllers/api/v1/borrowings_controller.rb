@@ -4,10 +4,21 @@ class Api::V1::BorrowingsController < ApplicationController
 
   def index
     if librarian?
-      borrowings = Borrowing.includes(copy: :borrowable, user: {}).where(returned_at: nil)
+      borrowings = Borrowing.includes(copy: :borrowable, user: {})
     else
       borrowings = current_user.borrowings.includes(copy: :borrowable)
     end
+
+    case params[:scope]
+    when "active"
+      borrowings = borrowings.active
+    when "overdue"
+      borrowings = borrowings.overdue
+    when "returned"
+      borrowings = borrowings.where.not(returned_at: nil)
+    end
+
+    borrowings = borrowings.order(due_at: :asc)
 
     render json: borrowings, each_serializer: BorrowingSerializer, status: :ok
   end
